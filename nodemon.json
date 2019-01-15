@@ -1,0 +1,6 @@
+{
+    "env": {
+        "MONGO_USER": "atlasRW1",
+        "MONGO_PASSWORD": "b7wSAgbRlLIgFnAP"
+    }
+}
