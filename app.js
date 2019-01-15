@@ -19,6 +19,7 @@ app.use(
                 title: String!
                 creator: String!
                 date: String!
+                text: String!
 
             }
 
@@ -26,6 +27,7 @@ app.use(
                 title: String!
                 creator: String!
                 date: String!
+                text: String!
             }
 
             type RootQuery {
@@ -50,7 +52,8 @@ app.use(
                     _id: Math.random().toString(),
                     title: args.postInput.title,
                     creator: args.postInput.creator,
-                    date: args.postInput.date
+                    date: args.postInput.date,
+                    text: args.postInput.text
                 };
                 posts.push(post);
                 return post;
@@ -61,9 +64,9 @@ app.use(
 );
 
 mongoose.connect(
-    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}
-    @cluster0-o6xft.mongodb.net/test?retryWrites=true`
-).then(() => {
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD
+        }@cluster0-o6xft.mongodb.net/test?retryWrites=true`
+    ).then(() => {
     app.listen(3130);
 }).catch(err => {
     console.log(err);
