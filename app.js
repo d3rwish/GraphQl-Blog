@@ -4,9 +4,9 @@ const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
-const app = express();
+const Post = require('./models/post');
 
-const posts = [];
+const app = express();
 
 app.use(bodyParser.json());
 
@@ -45,18 +45,34 @@ app.use(
         `),
         rootValue: {
             posts: () => {
-                return posts;
+                return Post
+                .find()
+                .then(posts => {
+                    return posts.map(post => {
+                        return { ...post._doc, _id: post._doc._id.toString() };
+                    });
+                })
+                .catch(err => {
+                    throw err;
+                });
             },
-            createPost: (args) => {
-                const post = {
-                    _id: Math.random().toString(),
+            createPost: args => {
+                const post = new Post({
                     title: args.postInput.title,
                     creator: args.postInput.creator,
-                    date: args.postInput.date,
+                    date: new Date(args.postInput.date),
                     text: args.postInput.text
-                };
-                posts.push(post);
-                return post;
+                })
+                return post
+                .save()
+                .then(result => {
+                    console.log(result);
+                    return { ...result._doc, _id: result._doc._id.toString() };
+                })
+                .catch(err => {
+                    console.log(err);
+                    throw err;
+                });
             }
         },
         graphiql: true
@@ -65,7 +81,7 @@ app.use(
 
 mongoose.connect(
     `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD
-        }@cluster0-o6xft.mongodb.net/test?retryWrites=true`
+        }@cluster0-o6xft.mongodb.net/${process.env.MONGO_DB}?retryWrites=true`
     ).then(() => {
     app.listen(3130);
 }).catch(err => {
