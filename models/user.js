@@ -11,8 +11,8 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    signInDate: {
-        type: Date,
+    signUpDate: {
+        type: String,
         required: true
     },
     createdPosts: [

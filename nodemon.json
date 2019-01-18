@@ -1,7 +1,7 @@
 {
     "env": {
         "MONGO_USER": "atlasRW1",
-        "MONGO_PASSWORD": "b7wSAgbRlLIgFnAP",
-        "MONGO_DB": "posts-app-dev"
+        "MONGO_PASSWORD": "IrNmCEypairUfFcM",
+        "MONGO_DB": "blog-graphql-app-dev"
     }
 }

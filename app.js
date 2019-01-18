@@ -3,8 +3,10 @@ const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const Post = require('./models/post');
+const User = require('./models/user');
 
 const app = express();
 
@@ -20,14 +22,24 @@ app.use(
                 creator: String!
                 createDate: String!
                 text: String!
+            }
 
+            type User {
+                _id: ID!
+                email: String!
+                password: String
+                signUpDate: String!
             }
 
             input PostInput {
                 title: String!
                 creator: String!
-                createDate: String!
                 text: String!
+            }
+
+            input UserInput {
+                email: String!
+                password: String!
             }
 
             type RootQuery {
@@ -36,6 +48,7 @@ app.use(
 
             type RootMutation {
                 createPost(postInput: PostInput): Post
+                createUser(userInput: UserInput): User
             }
 
             schema {
@@ -60,20 +73,36 @@ app.use(
                 const post = new Post({
                     title: args.postInput.title,
                     creator: args.postInput.creator,
-                    createDate: new Date(args.postInput.createDate),
+                    createDate: new Date().toLocaleString(), // To change in the production environment. Generated on the browser side (locale Time)
                     text: args.postInput.text
                 })
                 return post
                 .save()
                 .then(result => {
-                    console.log(result);
                     return { ...result._doc, _id: result._doc._id.toString() };
                 })
                 .catch(err => {
                     console.log(err);
                     throw err;
                 });
-            }
+            },
+            createUser: args => {
+                return bcrypt.hash(args.userInput.password, 12)
+                .then(hashedPassword => {
+                    const user = new User({
+                        email: args.userInput.email,
+                        password: hashedPassword,
+                        signUpDate: new Date().toLocaleString() // To change in the production environment. Generated on the browser side (locale Time)
+                    });
+                    return user.save();
+                })
+                .then(result => {
+                    return { ...result._doc, _id: result._doc._id.toString() };
+                })
+                .catch(err => {
+                    throw err;
+                });
+            },
         },
         graphiql: true
     })
