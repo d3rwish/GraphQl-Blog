@@ -10,7 +10,6 @@ const User = require('./models/user');
 
 const app = express();
 
-
 app.use(bodyParser.json());
 
 app.use(
@@ -20,7 +19,7 @@ app.use(
             type Post {
                 _id: ID!
                 title: String!
-                creator: String!
+                creator: User!
                 createDate: String!
                 text: String!
             }
@@ -30,6 +29,7 @@ app.use(
                 email: String!
                 password: String
                 signUpDate: String!
+                createdPosts: [Post!]
             }
 
             input PostInput {
