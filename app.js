@@ -61,6 +61,7 @@ app.use(
             posts: () => {
                 return Post
                 .find()
+                .populate('creator')
                 .then(posts => {
                     return posts.map(post => {
                         return { ...post._doc, _id: post._doc._id.toString() };
