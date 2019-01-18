@@ -64,7 +64,12 @@ app.use(
                 .populate('creator')
                 .then(posts => {
                     return posts.map(post => {
-                        return { ...post._doc, _id: post._doc._id.toString() };
+                        return {
+                            ...post._doc, _id: post._doc._id.toString(), creator: {
+                                ...post._doc.creator._doc,
+                                _id: event._doc.creator.id
+                            } 
+                        };
                     });
                 })
                 .catch(err => {
