@@ -18,7 +18,7 @@ app.use(
                 _id: ID!
                 title: String!
                 creator: String!
-                date: String!
+                createDate: String!
                 text: String!
 
             }
@@ -26,7 +26,7 @@ app.use(
             input PostInput {
                 title: String!
                 creator: String!
-                date: String!
+                createDate: String!
                 text: String!
             }
 
@@ -60,7 +60,7 @@ app.use(
                 const post = new Post({
                     title: args.postInput.title,
                     creator: args.postInput.creator,
-                    date: new Date(args.postInput.date),
+                    createDate: new Date(args.postInput.createDate),
                     text: args.postInput.text
                 })
                 return post

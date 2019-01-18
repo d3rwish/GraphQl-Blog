@@ -8,10 +8,10 @@ const postSchema = new Schema({
         required: true
     },
     creator: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
-    date: {
+    createDate: {
         type: Date,
         required: true
     },
