@@ -33,7 +33,7 @@ app.use(
 
             input PostInput {
                 title: String!
-                creator: String!
+                creator: String
                 text: String!
             }
 
@@ -72,14 +72,26 @@ app.use(
             createPost: args => {
                 const post = new Post({
                     title: args.postInput.title,
-                    creator: args.postInput.creator,
+                    creator: '5c4245d2a2fae6202ce4bb08',
                     createDate: new Date().toLocaleString(), // To change in the production environment. Generated on the browser side (locale Time)
                     text: args.postInput.text
-                })
+                });
+                let createdPost;
                 return post
                 .save()
                 .then(result => {
-                    return { ...result._doc, _id: result._doc._id.toString() };
+                    createdPost = { ...result._doc, _id: result._doc._id.toString() };
+                    return User.findById('5c4245d2a2fae6202ce4bb08');
+                })
+                .then(user => {
+                    if (!user) {
+                        throw new Error('User not found.')
+                    }
+                    user.createdPosts.push(post);
+                    return user.save();
+                })
+                .then(result => {
+                    return createdPost;
                 })
                 .catch(err => {
                     console.log(err);
@@ -87,7 +99,13 @@ app.use(
                 });
             },
             createUser: args => {
-                return bcrypt.hash(args.userInput.password, 12)
+                return User.findOne({email: args.userInput.email})
+                .then(user => {
+                    if (user) {
+                        throw new Error('User already exist.')
+                    }
+                    return bcrypt.hash(args.userInput.password, 12)
+                })
                 .then(hashedPassword => {
                     const user = new User({
                         email: args.userInput.email,
@@ -97,7 +115,7 @@ app.use(
                     return user.save();
                 })
                 .then(result => {
-                    return { ...result._doc, _id: result._doc._id.toString() };
+                    return { ...result._doc, _id: result._doc._id.toString(), password: null };
                 })
                 .catch(err => {
                     throw err;
