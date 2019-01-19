@@ -12,7 +12,7 @@ const postSchema = new Schema({
         ref: 'User'
     },
     createDate: {
-        type: Date,
+        type: String,
         required: true
     },
     text: {
