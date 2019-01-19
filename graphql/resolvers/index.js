@@ -3,42 +3,40 @@ const bcrypt = require('bcryptjs');
 const Post = require('../../models/post');
 const User = require('../../models/user');
 
-const posts = postIds => {
-    return Post.find({_id: {$in: postIds}})
-    .then(posts => {
-        return posts.map(post => {
-            return {
-                ...post._doc,
-                _id: post.id,
-                creator: user.bind(this, post.creator)
-            }
-        })
-    })
-    .catch(err => {
-        throw err;
-    });
-};
-
-const user = userID => {
-    return User.findById(userID)
-    .then(user => {
+const posts = async postIds => {
+    try {
+      const posts = await Post.find({ _id: { $in: postIds } });
+      posts.map(post => {
         return {
-            ...user._doc,
-            _id: user.id,
-            createdPosts: posts.bind(this, user._doc.createdPosts),
-            password: null
+          ...post._doc,
+          _id: post.id,
+          creator: user.bind(this, post.creator)
         };
-    })
-    .catch(err => {
-        throw err;
-    });
-};
+      });
+      return posts;
+    } catch (err) {
+      throw err;
+    }
+  };
+
+const user = async userId => {
+    try {
+      const user = await User.findById(userId);
+      return {
+        ...user._doc,
+        _id: user.id,
+        createdPosts: posts.bind(this, user._doc.createdPosts),
+        password: null
+      };
+    } catch (err) {
+      throw err;
+    }
+  };
 
 module.exports = {
-    posts: () => {
-        return Post
-        .find()
-        .then(posts => {
+    posts: async () => {
+        try {
+            const posts = await Post.find();
             return posts.map(post => {
                 return {
                     ...post._doc,
@@ -46,12 +44,12 @@ module.exports = {
                     creator: user.bind(this, post._doc.creator)
                 };
             });
-        })
-        .catch(err => {
-            throw err;
-        });
+        }
+        catch (err) {
+          throw err;
+        }
     },
-    createPost: args => {
+    createPost: async args => {
         const post = new Post({
             title: args.postInput.title,
             creator: args.postInput.creator,
@@ -59,56 +57,46 @@ module.exports = {
             text: args.postInput.text
         });
         let createdPost;
-        return post
-        .save()
-        .then(result => {
+        try {
+            const result = await post.save();
             createdPost = {
                 ...result._doc,
                 _id: result._doc._id,
                 creator: user.bind(this, result._doc.creator)
             };
-            return User.findById(post.creator);
-        })
-        .then(user => {
-            if (!user) {
-                throw new Error('User not found.')
+            const creator = await User.findById(post.creator);  
+            if (!creator) {
+                throw new Error('User not found.');
             }
-            user.createdPosts.push(post);
-            return user.save();
-        })
-        .then(result => {
+            creator.createdPosts.push(post);
+            await creator.save();
             return createdPost;
-        })
-        .catch(err => {
-            console.log(err);
+        }
+        catch (err) {
             throw err;
-        });
+        }
     },
-    createUser: args => {
-        return User.findOne({email: args.userInput.email})
-        .then(user => {
-            if (user) {
-                throw new Error('User already exist.')
+    createUser: async args => {
+        try {
+            const existingUser = await User.findOne({ email: args.userInput.email });
+            if (existingUser) {
+                throw new Error('User already exist.');
             }
-            return bcrypt.hash(args.userInput.password, 12)
-        })
-        .then(hashedPassword => {
+            const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
             const user = new User({
                 email: args.userInput.email,
                 password: hashedPassword,
                 signUpDate: new Date().toLocaleString() // To change in the production environment. Generated on the browser side (locale Time)
             });
-            return user.save();
-        })
-        .then(result => {
+            const result = await user.save();
             return {
                 ...result._doc,
                 _id: result._doc._id,
                 password: null
             };
-        })
-        .catch(err => {
-            throw err;
-        });
-    },
-}
+        }
+        catch (err) {
+        throw err;
+        }
+    }
+};
