@@ -23,7 +23,10 @@ module.exports = {
             throw err;
         }
     },
-    createPost: async args => {
+    createPost: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthenticated!');
+        }
         const post = new Post({
             title: args.postInput.title,
             creator: args.postInput.creator,
