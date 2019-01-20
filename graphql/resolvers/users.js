@@ -2,7 +2,7 @@ const User = require('../../models/user');
 const { transformUser } = require('./merge');
 
 module.exports = {
-    users: async () => {
+    allUsers: async () => {
         try {
             const users = await User.find();
             return users.map(user => {

@@ -3,7 +3,10 @@ const User = require('../../models/user');
 const { transformPost } = require('./merge');
 
 module.exports = {
-    posts: async () => {
+
+    // All Root Queries for Posts
+
+    allPosts: async () => {
         try {
             const posts = await Post.find();
             return posts.map(post => {
@@ -23,15 +26,29 @@ module.exports = {
             throw err;
         }
     },
-    createPost: async (args, req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthenticated!');
+    userPosts: async args => {
+        try {
+            const posts = await Post.find({ creator: { $in: args.userId } });
+            return posts.map(post => {
+                return transformPost(post);
+            });
         }
+        catch (err) {
+            throw err;
+        }
+    },
+
+    // All Root Mutations for Posts
+
+    createPost: async (args, req) => {
+        // if (!req.isAuth) {
+        //     throw new Error('Unauthenticated!');
+        // }
         const post = new Post({
             title: args.postInput.title,
             creator: args.postInput.creator,
-            createDate: new Date().toLocaleString(), // To change in the production environment. Generated on the browser side (locale Time)
-            text: args.postInput.text
+            creationDate: new Date().toLocaleString(), // To change in the production environment. Generated on the browser side (locale Time)
+            content: args.postInput.content
         });
         let createdPost;
         try {

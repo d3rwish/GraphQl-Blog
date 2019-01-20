@@ -14,6 +14,8 @@ module.exports = {
             const user = new User({
                 email: args.userInput.email,
                 password: hashedPassword,
+                name: args.userInput.name,
+                role: args.userInput.role,
                 signUpDate: new Date().toLocaleString() // To change in the production environment. Generated on the browser side (locale Time)
             });
             const result = await user.save();

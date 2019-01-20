@@ -5,40 +5,55 @@ type Post {
     _id: ID!
     title: String!
     creator: User!
-    createDate: String!
-    text: String!
+    creationDate: String!
+    content : String!
+    comments: [Comment!]
 }
 
 type User {
     _id: ID!
     email: String!
+    name: String!
     password: String
     signUpDate: String!
+    role: String!
     createdPosts: [Post!]
+    createdComments: [Comment!]
 }
 
-type AuthData {
-    userId: ID!
-    userToken: String!
-    userTokenExp: Int!
+type Comment {
+    _id: ID!
+    creator: User!
+    creationDate: String!
+    content : String!
 }
 
 input PostInput {
     title: String!
     creator: String!
-    text: String!
+    content: String!
 }
 
 input UserInput {
     email: String!
     password: String!
+    name: String!
+    role: String!
 }
 
-type RootQuery {
-    posts: [Post!]!
+input CommentInput {
+    creator: String!
+    content : String!
+}
+
+type RootQueries {
+    allPosts: [Post!]!
     singlePost(postId: ID!): Post!
-    users: [User!]!
+    userPosts(userId: ID!): [Post!]!
+
+    allUsers: [User!]!
     singleUser(userId: ID!): User!
+
     login(email: String!, password: String!): AuthData!
 }
 
@@ -47,8 +62,14 @@ type RootMutation {
     createUser(userInput: UserInput): User
 }
 
+type AuthData {
+    userId: ID!
+    userToken: String!
+    userTokenExp: Int!
+}
+
 schema {
-    query: RootQuery
+    query: RootQueries
     mutation: RootMutation
 }
 `)

@@ -11,7 +11,15 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    name: {
+        type: String,
+        required: true
+    },
     signUpDate: {
+        type: String,
+        required: true
+    },
+    role: {
         type: String,
         required: true
     },
@@ -19,6 +27,12 @@ const userSchema = new Schema({
         {
             type: Schema.Types.ObjectId,
             ref: 'Post'
+        }
+    ],
+    createdComments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Comment'
         }
     ]
 });
