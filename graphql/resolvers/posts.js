@@ -14,6 +14,15 @@ module.exports = {
             throw err;
         }
     },
+    singlePost: async args => {
+        try {
+            const post = await Post.findById(args.postId);
+            return transformPost(post);
+        }
+        catch (err) {
+            throw err;
+        }
+    },
     createPost: async args => {
         const post = new Post({
             title: args.postInput.title,

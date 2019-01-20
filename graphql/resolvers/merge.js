@@ -9,6 +9,25 @@ const transformPost = post => {
     };
 };
 
+const transformUser = user => {
+    return {
+        ...user._doc,
+        _id: user.id,
+        createdPosts: posts.bind(this, user._doc.createdPosts),
+        password: null
+    };
+};
+
+const user = async userId => {
+    try {
+        const user = await User.findById(userId);
+        return transformUser(user);npm 
+    }
+    catch (err) {
+        throw err;
+    }
+};
+
 const posts = async postIds => {
     try {
         const posts = await Post.find({ _id: { $in: postIds } });
@@ -21,32 +40,5 @@ const posts = async postIds => {
     }
 };
 
-const singlePost = async postId => {
-    try {
-        const post = await Post.findById(postId);
-        return transformPost(post);
-    }
-    catch (err) {
-        throw err;
-    }
-};
-
-const user = async userId => {
-    try {
-        const user = await User.findById(userId);
-        return {
-            ...user._doc,
-            _id: user.id,
-            createdPosts: posts.bind(this, user._doc.createdPosts),
-            password: null
-        };
-    }
-    catch (err) {
-        throw err;
-    }
-};
-
-exports.posts = posts;
-exports.singlePost = singlePost;
-exports.user = user;
 exports.transformPost = transformPost;
+exports.transformUser = transformUser;

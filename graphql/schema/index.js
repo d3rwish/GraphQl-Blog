@@ -17,6 +17,12 @@ type User {
     createdPosts: [Post!]
 }
 
+type AuthData {
+    userId: ID!
+    userToken: String!
+    userTokenExp: Int!
+}
+
 input PostInput {
     title: String!
     creator: String!
@@ -30,7 +36,10 @@ input UserInput {
 
 type RootQuery {
     posts: [Post!]!
+    singlePost(postId: ID!): Post!
     users: [User!]!
+    singleUser(userId: ID!): User!
+    login(email: String!, password: String!): AuthData!
 }
 
 type RootMutation {
