@@ -38,7 +38,6 @@ input UserInput {
     email: String!
     password: String!
     name: String!
-    role: String!
 }
 
 input CommentInput {
