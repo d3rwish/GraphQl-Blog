@@ -7,7 +7,7 @@ import './MainNavigation.css';
 
 const mainNavigation = props => (
     <AuthContext.Consumer>
-        {(context) => {
+        {context => {
             return (
                 <header className="main-nav">
                     <div className="main-nav__logo">
@@ -28,6 +28,9 @@ const mainNavigation = props => (
 									</li>
 									<li>
 										<NavLink to="/user">User</NavLink>
+									</li>
+									<li>
+										<button onClick={context.logout}>Logout</button>
 									</li>
 								</ul>
 							)}
